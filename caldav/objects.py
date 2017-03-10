@@ -295,7 +295,7 @@ class Principal(DAVObject):
     This class represents a DAV Principal. It doesn't do much, except
     keep track of the URLs for the calendar-home-set, etc.
     """
-    def __init__(self, client=None, url=None):
+    def __init__(self, client=None, url=None, masquerader=None, masquerade_as=None):
         """
         Returns a Principal.
 
@@ -314,6 +314,9 @@ class Principal(DAVObject):
         else:
             self.url = self.client.url
             cup = self.get_properties([dav.CurrentUserPrincipal()])
+            if masquerade_as:
+                for k, v in cup.items():
+                    cup[k] = v.replace(masquerader, masquerade_as)
             self.url = self.client.url.join(URL.objectify(cup['{DAV:}current-user-principal']))
 
     def make_calendar(self, name=None, cal_id=None, supported_calendar_component_set=None):

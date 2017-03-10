@@ -58,7 +58,7 @@ class DAVClient:
     proxy = None
     url = None
 
-    def __init__(self, url, proxy=None, username=None, password=None, auth=None, ssl_verify_cert=True):
+    def __init__(self, url, proxy=None, username=None, password=None, auth=None, ssl_verify_cert=True, masquerade_as=None):
         """
         Sets up a HTTPConnection object towards the server in the url.
         Parameters:
@@ -96,6 +96,7 @@ class DAVClient:
 
         self.username = username
         self.password = password
+        self.masquerade_as = masquerade_as
         self.auth = auth ## TODO: it's possible to force through a specific auth method here, but no test code for this.
         self.ssl_verify_cert = ssl_verify_cert
         self.url = self.url.unauth()
@@ -110,7 +111,7 @@ class DAVClient:
         higher-level methods for dealing with the principals
         calendars.
         """
-        return Principal(self)
+        return Principal(self, masquerader=self.username, masquerade_as=self.masquerade_as)
 
     def propfind(self, url=None, props="", depth=0):
         """
